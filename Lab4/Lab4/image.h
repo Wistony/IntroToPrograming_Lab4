@@ -4,22 +4,22 @@
 using namespace std;
 
 class image {
-protected:
+public:
 	BMPHEAD info;
-	PIXELDATA **array;
+	PIXELDATA **bitmap;
 };
 
-class readImage:private image{
+class readImage:public image{
 public:
 	image read(const char*);
 };
 
-class resizeImage :private image {
+class resizeImage :public image {
 public:
 	image resize(image&, double);
 };
 
-class saveImage :private image {
+class saveImage :public image {
 public:
 	void save(image&, string);
 };
