@@ -94,3 +94,20 @@ void saveImage::save(image& picture, const char* nameFile) {
 
 	fclose(outputFile);
 }
+
+image resizeImage::resize(image& picture, double coefficient) {
+	image resizePicture;
+	resizePicture.info = picture.info;
+	resizePicture.info.depth *= coefficient;
+	resizePicture.info.width *= coefficient;
+	int bytesPerLine = resizePicture.info.width * 3;
+	int multiplicity = bytesPerLine % 4;
+	resizePicture.info.biSizeImage = resizePicture.info.width * 3 * resizePicture.info.depth + (4 - multiplicity) * resizePicture.info.width;
+	resizePicture.info.filesize = resizePicture.info.biSizeImage + sizeof(resizePicture.info);
+
+	resizePicture.bitmap = new PIXELDATA*[resizePicture.info.depth];
+	for (int i = 0; i < resizePicture.info.depth; i++)
+		resizePicture.bitmap[i] = new PIXELDATA[resizePicture.info.width];
+
+
+}
