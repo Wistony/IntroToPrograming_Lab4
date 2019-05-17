@@ -10,6 +10,7 @@ public:
 };
 
 class readImage:public image{
+	void readInfoHeader(image&,FILE*);
 public:
 	image read(const char*);
 };
@@ -20,6 +21,7 @@ public:
 };
 
 class saveImage :public image {
+	void saveInfoHeader(image&,FILE*);
 public:
-	void save(image&, string);
+	void save(image&, const char*);
 };

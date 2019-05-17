@@ -3,15 +3,7 @@
 #include <iostream>
 using namespace std;
 
-image readImage::read(const char* nameFile) {
-	image picture;
-	FILE* inputFile;
-	inputFile = fopen(nameFile, "rb");
-	if (inputFile == NULL) {
-		cout << " File don`t open ";
-		exit(1);
-	}
-	
+void readImage::readInfoHeader(image& picture,FILE* inputFile) {
 	fread(&picture.info.id, sizeof(picture.info.id), 1, inputFile);
 	fread(&picture.info.filesize, sizeof(picture.info.filesize), 1, inputFile);
 	fread(&picture.info.reserved, sizeof(picture.info.reserved), 1, inputFile);
@@ -27,13 +19,22 @@ image readImage::read(const char* nameFile) {
 	fread(&picture.info.biYPelsPerMeter, sizeof(picture.info.biYPelsPerMeter), 1, inputFile);
 	fread(&picture.info.biClrUsed, sizeof(picture.info.biClrUsed), 1, inputFile);
 	fread(&picture.info.biClrImportant, sizeof(picture.info.biClrImportant), 1, inputFile);
+}
+
+image readImage::read(const char* nameFile) {
+	image picture;
+	FILE* inputFile;
+	inputFile = fopen(nameFile, "rb");
+	if (inputFile == NULL) {
+		cout << " File don`t open ";
+		exit(1);
+	}
+	
+	readInfoHeader(picture, inputFile);
 
 	picture.bitmap = new PIXELDATA*[picture.info.depth];
 	for (int i = 0; i < picture.info.depth; i++) 
 		picture.bitmap[i] = new PIXELDATA[picture.info.width];
-
-	int bytesPerLine = picture.info.width * 3;
-	int multiplicity = bytesPerLine % 4;
 
 	for (int i = 0; i < picture.info.depth; i++) {
 		for (int j = 0; j < picture.info.width; j++) {
@@ -41,12 +42,49 @@ image readImage::read(const char* nameFile) {
 			fread(&picture.bitmap[i][j].greenComponent, 1, 1, inputFile);
 			fread(&picture.bitmap[i][j].redComponent, 1, 1, inputFile);
 		}
-		/*if (multiplicity) {
-			PIXELDATA temp; // empty pixel;
-			fread(&bitmap[i][j])
-		}*/
 	}
 	fclose(inputFile);
 
 	return picture;
+}
+
+void saveImage::saveInfoHeader(image& picture,FILE* outputFile) {
+	fwrite(&picture.info.id, sizeof(picture.info.id), 1, outputFile);
+	fwrite(&picture.info.filesize, sizeof(picture.info.filesize), 1, outputFile);
+	fwrite(&picture.info.reserved, sizeof(picture.info.reserved), 1, outputFile);
+	fwrite(&picture.info.headersize, sizeof(picture.info.headersize), 1, outputFile);
+	fwrite(&picture.info.infoSize, sizeof(picture.info.infoSize), 1, outputFile);
+	fwrite(&picture.info.width, sizeof(picture.info.width), 1, outputFile);
+	fwrite(&picture.info.depth, sizeof(picture.info.depth), 1, outputFile);
+	fwrite(&picture.info.biPlanes, sizeof(picture.info.biPlanes), 1, outputFile);
+	fwrite(&picture.info.bits, sizeof(picture.info.bits), 1, outputFile);
+	fwrite(&picture.info.biCompression, sizeof(picture.info.biCompression), 1, outputFile);
+	fwrite(&picture.info.biSizeImage, sizeof(picture.info.biSizeImage), 1, outputFile);
+	fwrite(&picture.info.biXPelsPerMeter, sizeof(picture.info.biXPelsPerMeter), 1, outputFile);
+	fwrite(&picture.info.biYPelsPerMeter, sizeof(picture.info.biYPelsPerMeter), 1, outputFile);
+	fwrite(&picture.info.biClrUsed, sizeof(picture.info.biClrUsed), 1, outputFile);
+	fwrite(&picture.info.biClrImportant, sizeof(picture.info.biClrImportant), 1, outputFile);
+}
+
+void saveImage::save(image& picture, const char* nameFile) {
+	FILE* outputFile;
+	outputFile = fopen(nameFile, "wb");
+	int8_t emptyPixel = 0x00;
+
+	saveInfoHeader(picture, outputFile);
+
+	int bytesPerLine = picture.info.width * 3;
+	int multiplicity = bytesPerLine % 4;
+
+	for (int i = 0; i < picture.info.depth; i++) {
+		for (int j = 0; j < picture.info.width; j++) {
+			fwrite(&picture.bitmap[i][j].blueComponent, 1, 1, outputFile);
+			fwrite(&picture.bitmap[i][j].greenComponent, 1, 1, outputFile);
+			fwrite(&picture.bitmap[i][j].redComponent, 1, 1, outputFile);
+		}
+		if (multiplicity)
+			fwrite(&emptyPixel, 1, 4 - multiplicity, outputFile);
+	}
+
+	fclose(outputFile);
 }

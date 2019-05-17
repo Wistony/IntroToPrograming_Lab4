@@ -9,10 +9,12 @@ int main(int argc, char* argv[]) {
 	//const char* outputFile = argv[2];
 	//double coefficient = stoi(argv[3]);
 	const char* inputFile = "bmp.bmp";
+	const char* outputFile = "new1.bmp";
 	image picture;
 	readImage reader;
+	saveImage saver;
 	picture = reader.read(inputFile);
-
+	saver.save(picture, outputFile);
 
 	cin.ignore();
 	cin.get();
