@@ -24,6 +24,7 @@ void readImage::readInfoHeader(image& picture,FILE* inputFile) {
 image readImage::read(const char* nameFile) {
 	image picture;
 	FILE* inputFile;
+	PIXELDATA emptyPixel;
 	inputFile = fopen(nameFile, "rb");
 	if (inputFile == NULL) {
 		cout << " File don`t open ";
@@ -36,12 +37,17 @@ image readImage::read(const char* nameFile) {
 	for (int i = 0; i < picture.info.depth; i++) 
 		picture.bitmap[i] = new PIXELDATA[picture.info.width];
 
+	int bytesPerLine = picture.info.width * 3;
+	int multiplicity = bytesPerLine % 4;
+
 	for (int i = 0; i < picture.info.depth; i++) {
 		for (int j = 0; j < picture.info.width; j++) {
 			fread(&picture.bitmap[i][j].blueComponent, 1, 1, inputFile);
 			fread(&picture.bitmap[i][j].greenComponent, 1, 1, inputFile);
 			fread(&picture.bitmap[i][j].redComponent, 1, 1, inputFile);
 		}
+		if (multiplicity) 
+			fread(&emptyPixel, 1, 4 - multiplicity, inputFile);
 	}
 	fclose(inputFile);
 
