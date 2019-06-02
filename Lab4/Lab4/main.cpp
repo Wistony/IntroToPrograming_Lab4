@@ -5,14 +5,11 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-	//const char* inputFile = argv[1];
-	//const char* outputFile = argv[2];
-	//double coefficient = stoi(argv[3]);
-	const char* inputFile = "bmp.bmp";
-	const char* outputFile = "new1.bmp";
-
-	double coefficient;
-	cin >> coefficient;
+	char* inputFile = argv[1];
+	char* outputFile = argv[2];
+	double coefficient = stod(argv[3]);
+	
+	cout << " Increase the image " << coefficient << " times..." << endl;
 	image picture, resizePicture;
 	readImage reader;
 	resizeImage resizer;
@@ -20,8 +17,8 @@ int main(int argc, char* argv[]) {
 	picture = reader.read(inputFile);
 	resizePicture = resizer.resize(picture, coefficient);
 	saver.save(resizePicture, outputFile);
+	cout << " Increase done successfully!" << endl;
+	cout << " Image save to " << outputFile;
 
-	cin.ignore();
-	cin.get();
-	system("pause");
+	return 0;
 }
