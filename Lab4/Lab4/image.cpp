@@ -110,4 +110,37 @@ image resizeImage::resize(image& picture, double coefficient) {
 		resizePicture.bitmap[i] = new PIXELDATA[resizePicture.info.width];
 
 
+
+	float t;
+	int x, y, x_diff, y_diff;
+	float x_ratio = (((float)(picture.info.depth - 1)) / resizePicture.info.depth);
+	float y_ratio = (((float)(picture.info.width - 1)) / resizePicture.info.width);
+	float d1, d2, d3, d4;
+	PIXELDATA p1, p2, p3, p4, temp;
+
+	for (int i = 0; i < resizePicture.info.depth;i++) {
+		for (int j = 0; j < resizePicture.info.width;j++) {
+			x = floor(x_ratio*i);
+			y = floor(y_ratio*j);
+			x_diff = (x_ratio*i) - x;
+			y_diff = (y_ratio*j) - y;
+
+			d1 = (1 - x_diff) * (1 - y_diff);
+			d2 = x_diff * (1 - y_diff);
+			d3 = x_diff * y_diff;
+			d4 = (1 - x_diff) * y_diff;
+
+			p1 = picture.bitmap[x][y];
+			p2 = picture.bitmap[x][y + 1];
+			p3 = picture.bitmap[x + 1][y + 1];
+			p4 = picture.bitmap[x + 1][y];
+			
+			temp.blueComponent = p1.blueComponent * d1 + p2.blueComponent * d2 + p3.blueComponent*d3 + p4.blueComponent*d4;
+			temp.greenComponent = p1.greenComponent*d1 + p2.greenComponent*d2 + p3.greenComponent*d3 + p4.greenComponent*d4;
+			temp.redComponent = p1.redComponent*d1 + p2.redComponent*d2 + p3.redComponent*d3 + p4.redComponent*d4;
+
+			resizePicture.bitmap[i][j] = temp;
+		}
+	}
+	return resizePicture;
 }

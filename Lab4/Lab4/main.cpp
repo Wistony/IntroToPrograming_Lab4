@@ -10,11 +10,16 @@ int main(int argc, char* argv[]) {
 	//double coefficient = stoi(argv[3]);
 	const char* inputFile = "bmp.bmp";
 	const char* outputFile = "new1.bmp";
-	image picture;
+
+	double coefficient;
+	cin >> coefficient;
+	image picture, resizePicture;
 	readImage reader;
+	resizeImage resizer;
 	saveImage saver;
 	picture = reader.read(inputFile);
-	saver.save(picture, outputFile);
+	resizePicture = resizer.resize(picture, coefficient);
+	saver.save(resizePicture, outputFile);
 
 	cin.ignore();
 	cin.get();
