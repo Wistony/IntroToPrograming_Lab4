@@ -15,7 +15,8 @@ public:
 	image read(const char*);
 };
 
-class resizeImage :public image {
+class resizeImage {
+	void interpolation(image* startImage, image* finishImage);
 public:
 	image resize(image&, double);
 };
