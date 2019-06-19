@@ -13,9 +13,7 @@ int main(int argc, char* argv[]) {
 	image picture;
 	readImage reader;
 	saveImage saver;
-	resizeImage repicture;
 	picture = reader.read(inputFile);
-	repicture.resize(picture,3);
 	saver.save(picture, outputFile);
 
 	cin.ignore();
